@@ -1,0 +1,9 @@
+= Quad Colors
+
+A "Four-Colors-Problem" themed Löve 2D game 
+
+.Sample Screenshot
+image::doc/sample.png[Screenshot of the game]
+
+.Color Selector in Settings
+image::doc/settings.png[Screenshot game settings]
