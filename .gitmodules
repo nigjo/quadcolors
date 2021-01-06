@@ -1,0 +1,9 @@
+[submodule "lib\\voronoi"]
+	path = lib\\voronoi
+	url = https://github.com/nigjo/iVoronoi.git
+[submodule "da0c7e596eff6cd0703bd70880e6b0a7"]
+	path = da0c7e596eff6cd0703bd70880e6b0a7
+	url = https://gist.github.com/da0c7e596eff6cd0703bd70880e6b0a7.git
+[submodule "lib\\button"]
+	path = lib\\button
+	url = https://gist.github.com/da0c7e596eff6cd0703bd70880e6b0a7.git

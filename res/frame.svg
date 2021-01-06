@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    version="1.1" preserveAspectRatio="xMinYMin"
+    width="320" height="320"
+    viewBox="-50 -50 100 100">
+    
+  <style><![CDATA[
+  .innenlinie{stroke:red}
+  ]]></style>
+    
+  <defs>
+    <polygon id="gem" points="45,0 31.8,31.8 0,45 -31.8,31.8 -45,0 -31.8,-31.8 0,-45 31.8,-31.8"/>
+    <mask id="quad3"><rect x="-50" y="-50" width="50" height="50" fill="white"/></mask>
+    <mask id="quad4"><rect x="0" y="-50" width="50" height="50" fill="white"/></mask>
+    <mask id="quad1"><rect x="0" y="0" width="50" height="50" fill="white"/></mask>
+    <mask id="quad2"><rect x="-50" y="0" width="50" height="50" fill="white"/></mask>
+  </defs>
+  
+  <!-- <rect x="-50" y="-50" width="100" height="100" fill="none" stroke="gray" /> -->
+  
+  <g>
+    <use xlink:href="#gem" fill="green" mask="url(#quad1)"/>
+    <use xlink:href="#gem" fill="gray" mask="url(#quad2)"/>
+    <use xlink:href="#gem" fill="red" mask="url(#quad3)"/>
+    <use xlink:href="#gem" fill="blue" mask="url(#quad4)"/>
+  </g>
+
+  <g stroke="rgb(192,192,192)" stroke-opacity=".66" stroke-width="4" fill="none">
+    <polygon points="25,0 17.7,17.7 0,25 -17.7,17.7 -25,0 -17.7,-17.7 0,-25 17.7,-17.7"
+      fill="white" fill-opacity=".75"/>
+    <line x1="45" y1="0" x2="25" y2="0" />
+    <line x1="31.8" y1="31.8" x2="17.7" y2="17.7" />
+    <line x1="0" y1="45" x2="0" y2="25" />
+    <line x1="-31.8" y1="31.8" x2="-17.7" y2="17.7" />
+    <line x1="-45" y1="0" x2="-25" y2="0" />
+    <line x1="-31.8" y1="-31.8" x2="-17.7" y2="-17.7" />
+    <line x1="0" y1="-45" x2="0" y2="-25" />
+    <line x1="31.8" y1="-31.8" x2="17.7" y2="-17.7" />
+  </g>
+  
+  <use xlink:href="#gem" stroke="gray" stroke-width="4" fill="none"/>
+
+</svg>
