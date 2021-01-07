@@ -7,7 +7,7 @@ function love.conf(t)
 	t.window.title = "QuadColors"
 	t.window.icon = "res/frame.png"
 	t.window.fullscreen = love._os == "Android" or love._os == "iOS"
-	t.window.width = 900
+	t.window.width = 908
 	t.window.height = 450
 	
 	t.accelerometerjoystick = false
