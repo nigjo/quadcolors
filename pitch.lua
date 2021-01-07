@@ -34,6 +34,13 @@ function FCPolygon:add(x,y)
 	table.insert(self.points,y)
 end
 
+FCPatch=FCPolygon:new()
+function FCPatch:new()
+	local p = FCPolygon.new(self)
+	p.colidx = 0
+	return p
+end
+
 FCPitchBase={}
 function FCPitchBase:new(knotCount, width, height)
 	local p = {}
@@ -43,15 +50,40 @@ function FCPitchBase:new(knotCount, width, height)
 	p.width = width
 	p.height = height
 
-	self.init(p, knotCount)
+	p.patchCount = self.init(p, knotCount)
 
 	return p
 end
 
 function FCPitchBase:init(knotCount)
+	return knotCount
+end
+
+---
+-- scans the current pitch for the right patch
+-- @return FCPatch or nil
+--
+function FCPitchBase:findPatch(x,y)
+	return nil
 end
 
 function FCPitchBase:setSelected(x,y)
+	local patch = self:findPatch(x,y)
+	if patch~=nil then
+		local nextcol = gamedata:getCurrentColor()
+		if patch.colidx == 0 then
+			gamedata:checkStart()
+			gamedata:addPoints(gamedata.gains.newTile)
+		elseif patch.colidx ~= nextcol then
+			gamedata:addPoints(gamedata.gains.changed)
+		else
+			-- no change
+			return
+		end
+		patch.colidx=nextcol
+		self:updateValidCounter()
+		gamedata:updateField()
+	end
 end
 
 --[[--
@@ -69,7 +101,7 @@ function FCPitchBase:createSelectorGem(size)
 end
 
 function FCPitchBase:drawFieldGem(polygon, color)
-	if #polygon.points > 6 then
+	if #polygon.points >= 6 then
 		if type(color) == 'number' then 
 			color = gamedata:getColor(color)
 		end
