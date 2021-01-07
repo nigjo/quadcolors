@@ -34,6 +34,9 @@ function gamedata:init(width, height)
 	-- Generate Field until all looks fine
 	-- self.pitch = Field:new(count, fw,fh)
 	self.pitch = pitchClass:new(self.count, fw,fh)
+	if type(self.pitch.patchCount) == 'number' then
+		self.count = self.pitch.patchCount
+	end
   
   gamedata.currentColor = 3
 
