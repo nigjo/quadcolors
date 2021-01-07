@@ -70,6 +70,9 @@ end
 
 function FCPitchBase:drawFieldGem(polygon, color)
 	if #polygon.points > 6 then
+		if type(color) == 'number' then 
+			color = gamedata:getColor(color)
+		end
 		love.graphics.setColor(color)
 		love.graphics.polygon("fill", unpack(polygon.points))
 	-- else
