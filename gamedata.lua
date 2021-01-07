@@ -1,3 +1,6 @@
+require "pitch"
+local pitchClass = require "pitch-gems"
+
 gamedata = {
 	events = {},
 	gains = {
@@ -14,7 +17,7 @@ gamedata = {
 function gamedata:init(width, height)
   local fw = width-math.max(math.floor(width*.12),50)
   local fh = height-math.max(math.floor(height*.10),50)
-  local count=(fw*fh)/4000
+  self.count=math.floor((fw*fh)/4000)
 	
 	self.width = width
 	self.height = height
@@ -29,36 +32,18 @@ function gamedata:init(width, height)
   self.colors = self.colorGroups.default
 	
 	-- Generate Field until all looks fine
-	local defectField
-	repeat
-		local maxcount
-		defectField = false
-		repeat
-			print("init field")
-			self.f = Field:new(count,fw,fh)
-			-- do not try endless to arrange the points
-			maxcount=20
-			while maxcount>0 and self.f:rearrange() do
-				maxcount = maxcount - 1
-			end
-		until maxcount>0
-		-- generate Voronoi diagram
-		self.f:checkEdges()
-		for index,polygon in pairs(self.f.net.polygons) do
-			if #polygon.points < 6 then
-				-- some polygons seems to be defective
-				print ("possible defect field")
-				defectField = true
-				break;
-			end
-		end
-	until not defectField
+	-- self.pitch = Field:new(count, fw,fh)
+	self.pitch = pitchClass:new(self.count, fw,fh)
   
   gamedata.currentColor = 3
 
   self.frame = GameFrame:new(width,height)
 
   -- table.insert(texts, "frame: "..fw.."x"..fh)
+end
+
+function gamedata:getPatchCount()
+	return self.count
 end
 
 function gamedata:toggleColors()
@@ -132,9 +117,9 @@ function gamedata:getDuration()
 	end
 end
 
-function gamedata:setValidCount(count)
-	self.validCounter = count
-	if count == #self.f.dots then
+function gamedata:setValidCount(vcount)
+	self.validCounter = vcount
+	if vcount == self.count then
 		self.endduration = 
 			love.timer.getTime() - self.starttime - self.pauseduration
 		self.finished=true
@@ -153,8 +138,8 @@ function gamedata:updateField()
 	--g.setBackgroundColor(1,1,1,1)
   --g.setColor(1,1,1,1)
   g.clear()
-  g.setScissor(0,0,self.f.width,self.f.height)
-  self.f:draw()
+  g.setScissor(0,0,self.pitch.width,self.pitch.height)
+  self.pitch:draw()
   g.setScissor()
   g.setCanvas()
 	self:fireChange('repaint')

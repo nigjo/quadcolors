@@ -1,46 +1,37 @@
 require "overlay"
 require "settings"
-require "field"
+--require "field"
 
 GameFrame=Overlay:new()
 
 function GameFrame:init()
-  -- local f = {}
-  -- setmetatable(f, self)
-  -- self.__index = self
-  
-  -- f.width = w
-  -- f.height = h
+
 	f=self
   
-  f.titleH = f.height-gamedata.f.height
-  f.menuW = f.width-gamedata.f.width
+  f.titleH = f.height-gamedata.pitch.height
+  f.menuW = f.width-gamedata.pitch.width
   
-  f.colorDotsGrid = gamedata.f.height / 10
+  f.colorDotsGrid = gamedata.pitch.height / 10
   f.colorDotsSize = math.min(f.colorDotsGrid*.9, f.menuW/3)
 	
 	f.titleFont = love.graphics.newFont("res/DejaVuSans.ttf",f.titleH/2)
 	f.texts={
 		point={
-			x=f.menuW+gamedata.f.width*.1,
+			x=f.menuW+gamedata.pitch.width*.1,
 			text = love.graphics.newText( f.titleFont, "Points: ")
 		},
 		size={
-			x=f.menuW+gamedata.f.width*.4,
+			x=f.menuW+gamedata.pitch.width*.4,
 			text= love.graphics.newText( f.titleFont, "Size: ")
 		},
 		playtime={
-			x=f.menuW+gamedata.f.width*.7,
+			x=f.menuW+gamedata.pitch.width*.7,
 			text = love.graphics.newText( f.titleFont, "Time: ")
 		}
 	}
 	f.baseline = (f.titleH-f.texts.point.text:getHeight())/2
 
-	f.colorGem = {}
-	for i=math.pi/4,2*math.pi,math.pi/4 do
-		table.insert(f.colorGem,f.colorDotsSize*math.cos(i))
-		table.insert(f.colorGem,f.colorDotsSize*math.sin(i))
-	end
+	f.colorGem = gamedata.pitch:createSelectorGem(f.colorDotsSize)
 	
 	f.logoCanvas = self:createLogo()
 
@@ -124,7 +115,7 @@ function GameFrame:findShape(x,y) -- -> Frame
 			return {
 				name = "field",
 				action=function()
-					gamedata.f:setSelected(x-self.menuW,y-self.titleH)
+					local res = gamedata.pitch:setSelected(x-self.menuW,y-self.titleH)
 				end
 			}
 		end
@@ -173,13 +164,10 @@ local function drawColorSelectors(self, dx,dy)
   local g=love.graphics
 	g.push()
 	g.translate(dx+self.menuW/2,self.titleH+self.colorDotsGrid*2)
-	drawFieldGem({points=self.colorGem,centroid={x=0,y=0}}, gamedata:getColor(1))
-	g.translate(0,self.colorDotsGrid*2)
-	drawFieldGem({points=self.colorGem,centroid={x=0,y=0}}, gamedata:getColor(2))
-	g.translate(0,self.colorDotsGrid*2)
-	drawFieldGem({points=self.colorGem,centroid={x=0,y=0}}, gamedata:getColor(3))
-	g.translate(0,self.colorDotsGrid*2)
-	drawFieldGem({points=self.colorGem,centroid={x=0,y=0}}, gamedata:getColor(4))
+	for i=1,4 do
+		gamedata.pitch:drawFieldGem(self.colorGem, gamedata:getColor(i))
+		g.translate(0,self.colorDotsGrid*2)
+	end
 	g.pop()
 	local colIdx = gamedata:getCurrentColor()
   if colIdx ~= nil then
@@ -206,7 +194,7 @@ local function drawGameStatistics(self,dx,dy)
 		dx+self.texts.point.x+ self.texts.point.text:getWidth(),
 		dy+self.baseline)
 
-	local count = #gamedata.f.dots
+	local count = gamedata:getPatchCount()
 	local done = gamedata:getValidCount()
 	g.print(done.."/"..count,
 		dx+self.texts.size.x+ self.texts.size.text:getWidth(),

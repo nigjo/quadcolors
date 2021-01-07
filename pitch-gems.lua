@@ -1,34 +1,55 @@
 require "lib/voronoi/voronoi"
+require "pitch"
 
-Field={}
+Field=FCPitchBase:new()
 Field.border = 20
 
 colorInitialDot = {0,0,1} -- blue
 colorSettled = {0,1,0} -- green
 colorMoved = {1,0,0} -- red
 
-function Field:new(knotCount, width, height)
-	m = {}
-	setmetatable(m, self)
-	self.__index = self
+function Field:init(knotCount)
 
-	m.width=width
-	m.height=height
+	m = self
 	m.arranged=false
 	m.finished=false
 
-	m.dots={}
-	for i=1,knotCount do
-		local dot = {
-			x=Field.border+math.random(width-Field.border-Field.border),
-			y=Field.border+math.random(height-Field.border-Field.border),
-			col=colorInitialDot,
-			colidx=0
-		}
-		table.insert(m.dots, dot)
-	end
-	
 	m.validCounter = 0
+
+	m.dots={}
+	local defectField
+	repeat
+		local maxcount
+		defectField = false
+		repeat
+			print("init field")
+			for i=1,knotCount do
+				local dot = {
+					x=Field.border+math.random(self.width-Field.border-Field.border),
+					y=Field.border+math.random(self.height-Field.border-Field.border),
+					col=colorInitialDot,
+					colidx=0
+				}
+				m.dots[i]= dot
+			end
+
+			-- do not try endless to arrange the points
+			maxcount=20
+			while maxcount>0 and self:rearrange() do
+				maxcount = maxcount - 1
+			end
+		until maxcount>0
+		-- generate Voronoi diagram
+		self:checkEdges()
+		for index,polygon in pairs(self.net.polygons) do
+			if #polygon.points < 6 then
+				-- some polygons seems to be defective
+				print ("possible defect field")
+				defectField = true
+				break;
+			end
+		end
+	until not defectField
 
 	return m
 end
@@ -63,13 +84,26 @@ local function drawGemSide(polygon, side, x1,y1,x2,y2)
 	-- print(x2,sides[sidx-1][1],cx)
 	g.polygon('line',unpack(side))
 end
+
+function Field:createSelectorGem(size)
+	local colorDotsSize = size
+	local colorGem = FCPitchBase.createSelectorGem(self,size)
+	colorGem.centroid = {x=0,y=0}
+	for i=math.pi/4,2*math.pi,math.pi/4 do
+		colorGem:add(colorDotsSize*math.cos(i),
+		    colorDotsSize*math.sin(i))
+	end
+	return colorGem
+end
+
 --[[
 Zeichnet einen "Edelstein" in ein Polygon.
 Diese Routine solle nicht direkt in draw verwendet werden. Es ist besser
 die Edelsteine in ein Canvas zu zeichnen.
 ]]--
-function drawFieldGem(polygon, color)
-	local g=love.graphics
+function Field:drawFieldGem(polygon, color)
+
+	local g=love.graphics	
 	g.push("all")
 	g.setColor(color)
 	g.polygon('fill',unpack(polygon.points))
@@ -139,8 +173,8 @@ function Field:draw()
 		for index,polygon in pairs(self.net.polygons) do
 			if #polygon.points >= 6 then
 				if self.dots[index].colidx > 0 then
-					drawFieldGem(polygon, gamedata.colors[self.dots[index].colidx])
-					--love.graphics.setColor(1,0,0,1)
+					local color = gamedata:getColor(self.dots[index].colidx)
+					self:drawFieldGem(polygon, color)
 				end
 				love.graphics.polygon('line',unpack(polygon.points))
 			else
@@ -265,3 +299,5 @@ end
 function Field:isArranged()
 	return self.arranged
 end
+
+return Field

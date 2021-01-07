@@ -36,7 +36,7 @@ function ColorGroupButton:draw()
 	for j=1,4 do
 		--g.circle("line", j*px,dy/2,dy/5*2)
 		g.translate(px,0)
-		drawFieldGem({points=self.colorGem,centroid={x=0,y=0}},cols[j])
+		gamedata.pitch:drawFieldGem(self.colorGem,cols[j])
 	end
 	g.pop()
 end
@@ -78,12 +78,7 @@ function ColorGroupSelector:new(w,h)
 	local dy=math.floor((s.height-self.lines-2)/self.lines)
 	local px=s.width/5
 	local gemSize = math.min(dy,px)*2/5
-	s.colorGem = {}
-	for i=math.pi/4,2*math.pi,math.pi/4 do
-		table.insert(s.colorGem,gemSize*math.cos(i))
-		table.insert(s.colorGem,gemSize*math.sin(i))
-	end
-	
+	s.colorGem = gamedata.pitch:createSelectorGem(gemSize)
 	
 	self.colSelectors={}
 	for i=1,self.lines do

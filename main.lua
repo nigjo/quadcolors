@@ -1,5 +1,4 @@
 require "gamedata"
-require "field"
 require "frame"
 
 function love.load()
@@ -22,17 +21,17 @@ function love.load()
   gamedata:updateField()
 end
 
-function debugRearrange(dt)
-  if not gamedata.f:isArranged() then
-    gamedata.last = gamedata.last + dt
-    if gamedata.last > 1 then
-      gamedata.last = 0
-      gamedata.f:rearrange()
-      gamedata.f:checkEdges()
-    end
-    gamedata:updateField()
-  end
-end
+-- function debugRearrange(dt)
+  -- if not gamedata.f:isArranged() then
+    -- gamedata.last = gamedata.last + dt
+    -- if gamedata.last > 1 then
+      -- gamedata.last = 0
+      -- gamedata.f:rearrange()
+      -- gamedata.f:checkEdges()
+    -- end
+    -- gamedata:updateField()
+  -- end
+-- end
 
 function love.mousepressed(x, y, button, istouch, presses)
   if button==1 then
@@ -111,10 +110,10 @@ function love.draw()
 	end
 	
   -- love.graphics.draw(gamedata.canvas, posx, posy)
-  -- love.graphics.setColor(1, 1, 1)
-  -- for i=1,table.getn(texts) do
-    -- love.graphics.print(texts[i],20,20+(i*16))
-  -- end
+  love.graphics.setColor(1, 1, 1)
+  for i=1,table.getn(texts) do
+    love.graphics.print(texts[i],20,20+(i*16))
+  end
   -- if mousePos ~= nil then
     -- love.graphics.setColor(1,1,0,.5)
     -- love.graphics.circle("fill", mousePos[1],mousePos[2], 20)
