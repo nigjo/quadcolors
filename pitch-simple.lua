@@ -42,25 +42,6 @@ function QuadraticPitch:findPatch(x,y)
 	end
 end
 
--- function QuadraticPitch:setSelected(x,y)
-	-- local patch = self:findPatch(x,y)
-	-- if patch~=nil then
-		-- local nextcol = gamedata:getCurrentColor()
-		-- if patch.colidx == 0 then
-			-- gamedata:checkStart()
-			-- gamedata:addPoints(gamedata.gains.newTile)
-		-- elseif patch.colidx ~= nextcol then
-			-- gamedata:addPoints(gamedata.gains.changed)
-		-- else
-			-- -- no change
-			-- return
-		-- end
-		-- patch.colidx=nextcol
-		-- self:updateValidCounter()
-		-- gamedata:updateField()
-	-- end
--- end
-
 function QuadraticPitch:check(idx, nextcol)
 	local colData = self.selections[idx]
 	return colData ~= nil and colData.colidx ~= 0 and colData.colidx ~= nextcol
