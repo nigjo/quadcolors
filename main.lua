@@ -67,11 +67,7 @@ function love.keypressed(key)
 	if gamedata.overlay ~= nil then
 		gamedata.overlay:keypressed(key)
 	else
-		if key == "escape" then
-			love.event.quit()
-		else
-			gamedata.frame:keypressed(key)
-		end
+		gamedata.frame:keypressed(key)
 	end
 end
 

@@ -28,6 +28,9 @@ function Overlay:findShape(x,y)
 end
 
 function Overlay:keypressed(key)
+	if key == "escape" then
+		gamedata.overlay = nil
+	end
 end
 
 function Overlay:draw(dx,dy)

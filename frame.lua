@@ -38,6 +38,12 @@ function GameFrame:init()
   return f
 end
 
+function GameFrame:keypressed(key)
+	if key == "escape" then
+		love.event.quit()
+	end
+end
+
 function GameFrame:createLogo() -- -> Frame
 	local c = love.graphics.newCanvas()
 	love.graphics.setCanvas(c)
