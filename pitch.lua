@@ -34,12 +34,47 @@ function FCPolygon:add(x,y)
 	table.insert(self.points,y)
 end
 
+function FCPolygon:getBounds()
+	if #self.points == 0 then return nil end
+	local xmin=self.points[1]
+	local ymin=self.points[2]
+	local xmax=self.points[1]
+	local ymax=self.points[2]
+	for i=3,#self.points,2 do
+		if xmin>self.points[i] then
+			xmin=self.points[i]
+		elseif xmax<self.points[i] then
+			xmax=self.points[i]
+		end
+		if ymin>self.points[i+1] then
+			ymin=self.points[i+1]
+		elseif ymax<self.points[i+1] then
+			ymax=self.points[i+1]
+		end
+	end
+	return xmin,ymin,xmax,ymax
+end
+
+function FCPolygon:getCenter()
+	if self.centroid ~= nil then
+		return self.centroid.x,self.centroid.y
+	end
+	local bounds = {self:getBounds()}
+	local cx = bounds[1]+(bounds[3]-bounds[1])/2
+	local cy = bounds[2]+(bounds[4]-bounds[2])/2
+	return cx,cy
+end
+
 FCPatch=FCPolygon:new()
-function FCPatch:new()
+function FCPatch:new(...)
 	local p = FCPolygon.new(self)
+	if arg~=nil and #arg>0 then
+		p.points = {...}
+	end
 	p.colidx = 0
 	return p
 end
+
 
 FCPitchBase={}
 function FCPitchBase:new(knotCount, width, height)
@@ -69,6 +104,7 @@ end
 
 function FCPitchBase:setSelected(x,y)
 	local patch = self:findPatch(x,y)
+	self._lastSelected = patch
 	if patch~=nil then
 		local nextcol = gamedata:getCurrentColor()
 		if patch.colidx == 0 then
@@ -83,6 +119,24 @@ function FCPitchBase:setSelected(x,y)
 		patch.colidx=nextcol
 		self:updateValidCounter()
 		gamedata:updateField()
+	end
+end
+
+function FCPitchBase:updateValidCounter(polygons)
+	if polygons~=nil then
+		local counter = 0
+		for i,fcPolgon in ipairs(polygons) do
+			local sameOrNone = false
+			for n,nPolygon in ipairs(self:_getNeighbors(fcPolgon)) do
+				if nPolygon.colidx == 0 or nPolygon.colidx == fcPolgon.colidx then
+					sameOrNone = true
+					break
+				end
+			end
+			if not sameOrNone then counter = counter + 1 end
+		end
+		self.finished = counter == #polygons
+		gamedata:setValidCount(counter)
 	end
 end
 
@@ -104,6 +158,8 @@ function FCPitchBase:drawFieldGem(polygon, color)
 	if #polygon.points >= 6 then
 		if type(color) == 'number' then 
 			color = gamedata:getColor(color)
+		elseif color==nil and polygon.colidx~=nil then
+			color = gamedata:getColor(polygon.colidx)
 		end
 		love.graphics.setColor(color)
 		love.graphics.polygon("fill", unpack(polygon.points))
@@ -116,4 +172,29 @@ function FCPitchBase:drawPolygon(polygon)
 end
 
 function FCPitchBase:draw()
+end
+
+function FCPitchBase:_getNeighbors(fcPolgon)
+	return {}
+end
+
+function FCPitchBase:_debugDrawNeighbors(fcPolgon)
+	if fcPolgon~=nil then
+		local cx,cy=fcPolgon:getCenter()
+		-- eine Auswahl vorhanden
+		for i,nPolygon in pairs(self:_getNeighbors(fcPolgon)) do
+			love.graphics.setColor(1,0,0,1)
+			local nbounds = {nPolygon:getBounds()}
+			-- love.graphics.polygon('line',unpack(polygon.points))
+			local nx,ny=nPolygon:getCenter()
+			love.graphics.line(nx,ny,cx,cy)
+			love.graphics.setColor(1,1,1,0.75)
+			love.graphics.print("#"..i.."/"..nPolygon.colidx,nx,ny)
+		end
+
+		love.graphics.setColor(1,0,0,1)
+		local xi,yi,xx,yx = fcPolgon:getBounds()
+		love.graphics.circle("line", cx,cy,
+			math.min(math.abs(xi-cx),math.abs(xx-cx),math.abs(yi-cy),math.abs(yx-cy))*.75)
+	end
 end
