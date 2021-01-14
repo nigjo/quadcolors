@@ -4,13 +4,13 @@ require "frame"
 function love.load()
 	print "initialize"
   math.randomseed(os.time())
-	
+
 	love.graphics.setFont(love.graphics.newFont("res/DejaVuSans.ttf",
 	    love.graphics.getFont():getHeight()))
-	
+
   posx, posy, width, height = love.window.getSafeArea( )
   ww, wh = love.graphics.getDimensions()
-  
+
   texts={
     -- "save: "..posx..","..posy.." "..width.."x"..height,
     -- "dim: "..ww.."x"..wh
@@ -80,11 +80,12 @@ function love.mousemoved( x, y, dx, dy, istouch )
 end
 
 function love.update(dt)
-  -- debugRearrange(dt)
-  -- love.mouse
-	-- gamedata.frame:update(dt)
-	if gamedata.overlay ~= nil and gamedata.starttime>0 and gamedata.endduration<0 then
-		gamedata.pauseduration = gamedata.pauseduration + dt
+	gamedata.frame:update(dt)
+	if gamedata.overlay ~= nil then
+		if gamedata.starttime>0 and gamedata.endduration<0 then
+			gamedata.pauseduration = gamedata.pauseduration + dt
+		end
+		gamedata.overlay:update(dt)
 	end
 end
 
@@ -94,7 +95,7 @@ function love.draw()
 	-- Frame wird immer gezeichnet
   gamedata.frame:draw(posx, posy)
 	love.graphics.pop()
-	
+
 	-- Overlay nur, wenn es da ist
 	if gamedata.overlay ~= nil then
 		love.graphics.setColor(0,0,0,.66)
@@ -104,7 +105,7 @@ function love.draw()
 		gamedata.overlay:draw(posx, posy)
 		love.graphics.pop()
 	end
-	
+
   -- love.graphics.draw(gamedata.canvas, posx, posy)
   love.graphics.setColor(1, 1, 1)
   for i=1,table.getn(texts) do

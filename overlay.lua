@@ -4,14 +4,14 @@ function Overlay:new(w,h)
   local f = {}
   setmetatable(f, self)
   self.__index = self
-	
-	
+
+
 	f.width = w or 0
 	f.height = h or 0
 	print (f.width.."x"..f.height)
-	
+
 	self.init(f)
-	
+
 	return f
 end
 
@@ -27,10 +27,17 @@ function Overlay:findShape(x,y)
 	}
 end
 
+function Overlay:closing()
+end
+
 function Overlay:keypressed(key)
 	if key == "escape" then
 		gamedata.overlay = nil
+		self:closing()
 	end
+end
+
+function Overlay:update(dt)
 end
 
 function Overlay:draw(dx,dy)
