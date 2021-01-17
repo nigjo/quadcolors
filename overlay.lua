@@ -18,11 +18,16 @@ end
 function Overlay:init()
 end
 
+function Overlay:close()
+	gamedata.overlay = nil
+	self:closing()
+end
+
 function Overlay:findShape(x,y)
 	return {
 		name="closeOverlay",
 		action=function()
-			gamedata.overlay = nil
+			self:close()
 		end
 	}
 end
@@ -32,8 +37,7 @@ end
 
 function Overlay:keypressed(key)
 	if key == "escape" then
-		gamedata.overlay = nil
-		self:closing()
+		self:close()
 	end
 end
 
