@@ -1,4 +1,5 @@
 require "overlay"
+require "lib/button/button"
 
 local gameIsRunning = false
 
@@ -32,12 +33,27 @@ function WinningParty:createRocket()
 end
 
 function WinningParty:init()
-	local count = math.ceil(self.width/150)
+	local count = math.ceil(self.width/100)
 	self.rockets={}
 	for i=1,count do
 		self.rockets[i] = self:createRocket()
 	end
 	self.maxr=math.min(self.width,self.height)*.075
+	
+	local restart = Button:new("Neue Spiel", function()
+		print("restart")
+		self:close()
+		love.event.quit( "restart" )
+	end, self.width*.05,self.height*.05)
+	local nextLevel = Button:new("Weiter",
+	function()
+	end, restart.posx+restart.width+self.width*.05,restart.posy)
+	nextLevel.enabled = false
+	nextLevel.visible = false
+	
+	self.buttons = {
+		nextLevel,restart
+	}
 end
 
 function WinningParty:draw(h,w)
@@ -47,11 +63,14 @@ function WinningParty:draw(h,w)
 		if r.t>r.dur then
 			love.graphics.setColor(r.excol)
 			love.graphics.circle("line", r.ex,r.ey,r.exr)
+			love.graphics.circle("line", r.ex,r.ey,r.exr*2/3)
+			love.graphics.circle("line", r.ex,r.ey,r.exr/3)
 		else
 			love.graphics.setColor(1,1,1)
 			love.graphics.points(r.x,r.y)
 		end
 	end
+	Button.drawAll(self.buttons)
 end
 
 local explodeTime = 1.25
@@ -75,5 +94,14 @@ function WinningParty:update(dt)
 			r.x = r.sx + f*dx
 			r.y = r.sy + f*dy
 		end
+	end
+end
+
+function WinningParty:findShape(x,y)
+	btnAction=Button.findAction(x,y,self.buttons)
+	if btnAction.name=="none" then
+		return Overlay:findShape(x,y)
+	else
+		return btnAction
 	end
 end
