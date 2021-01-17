@@ -2,6 +2,7 @@ local Locale=Local or {initialized=false}
 
 local function loadLocale(self, lang)
 	print("try to load "..lang)
+	self.lastLocale = lang
 	if love.filesystem.getInfo('lang/'..lang..'.lua', 'file') ~= nil then
 		local langdata = require('lang/'..lang)
 		for k,v in pairs(langdata) do
@@ -15,6 +16,10 @@ end
 function Locale:init()
 	self.texts={}
 	loadLocale(self, 'en')
+end
+
+function Locale:getLocale()
+	return self.lastLocale
 end
 
 function Locale:setLocale(newlang)

@@ -18,6 +18,7 @@ function gamedata:init(width, height)
   local fw = width-math.max(math.floor(width*.12),50)
   local fh = height-math.max(math.floor(height*.10),50)
   self.count=math.floor((fw*fh)/4000)
+	-- self.count = 5
 
 	self.width = width
 	self.height = height
@@ -53,6 +54,7 @@ function gamedata:store()
 	content = content.."level=".."1".."\n"
 	content = content.."colorName="..self:getColorName().."\n"
 	content = content.."count="..self.count.."\n"
+	content = content.."locale="..Locale:getLocale().."\n"
 	love.filesystem.write("fc_settings.dat",content)
 end
 
@@ -63,6 +65,9 @@ local savedataLoader= {
 	-- end,
 	["colorName"]=function(self, val)
 		self:setColors(val)
+	end,
+	["locale"]=function(self, val)
+		Locale:setLocale(val)
 	end
 }
 

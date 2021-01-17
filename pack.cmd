@@ -10,6 +10,7 @@ if not defined deploydir set "deploydir=deploy.love"
 
 (
 echo *.lua
+echo lang\*.lua
 echo res\frame.png
 echo res\frame64.png
 echo res\DejaVuSans.ttf
