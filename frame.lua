@@ -4,8 +4,12 @@ require "settings"
 
 GameFrame=Overlay:new()
 
-function GameFrame:init()
+function GameFrame:closing()
+	love.event.push("quit")
+end
 
+function GameFrame:init()
+	self.name="GameFrame"
 	f=self
   
   f.titleH = f.height-gamedata.pitch.height
@@ -87,7 +91,8 @@ function GameFrame:findShape(x,y) -- -> Frame
 				-- self.menuActive = true
 				-- love.event.quit( "restart" )
 				print("buh")
-				gamedata.overlay = SettingsUI:new(self.width,self.height)
+				local settings = SettingsUI:new(self.width,self.height)
+				settings:open()
 			end
     }
   elseif x<self.menuW  then

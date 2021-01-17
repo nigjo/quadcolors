@@ -131,6 +131,7 @@ end
 SettingsUI=Overlay:new()
 function SettingsUI:init()
 	print("Einstellungen")
+	self.name="SettingsUI"
 
 	local borderx = self.width*.10
 	local bordery = self.height*.10
@@ -159,7 +160,7 @@ function SettingsUI:init()
 	}
 end
 
-function SettingsUI:closing()
+function SettingsUI:closed()
 	gamedata:store()
 end
 
@@ -188,6 +189,7 @@ function SettingsUI:findShape(x,y)
 end
 
 function SettingsUI:draw(dx,dy)
+	Overlay.draw(self, dx,dy)
 	g=love.graphics
 
 	g.push()

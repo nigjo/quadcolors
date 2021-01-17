@@ -42,10 +42,6 @@ function gamedata:init(width, height)
   gamedata.currentColor = 3
 	
 	self:load()
-
-  self.frame = GameFrame:new(width,height)
-
-  -- table.insert(texts, "frame: "..fw.."x"..fh)
 end
 
 function gamedata:store()
@@ -92,6 +88,12 @@ end
 
 function gamedata:getPatchCount()
 	return self.count
+end
+
+function gamedata:addPauseTime(dt)
+	if gamedata.starttime>0 and gamedata.endduration<0 then
+		gamedata.pauseduration = gamedata.pauseduration + dt
+	end
 end
 
 function gamedata:toggleColors()

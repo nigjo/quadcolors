@@ -12,7 +12,8 @@ gamedata:addListener('finished', function()
 	if gameIsRunning then
 		print("lets party")
 		gameIsRunning = false
-		gamedata.overlay = WinningParty:new(gamedata.width, gamedata.height)
+		local success = WinningParty:new(gamedata.width, gamedata.height)
+		success:open()
 	end
 end)
 
@@ -33,6 +34,7 @@ function WinningParty:createRocket()
 end
 
 function WinningParty:init()
+	self.name="WinningParty"
 	local count = math.ceil(self.width/100)
 	self.rockets={}
 	for i=1,count do
@@ -101,7 +103,7 @@ end
 function WinningParty:findShape(x,y)
 	btnAction=Button.findAction(x,y,self.buttons)
 	if btnAction.name=="none" then
-		return Overlay:findShape(x,y)
+		return Overlay.findShape(self,x,y)
 	else
 		return btnAction
 	end
