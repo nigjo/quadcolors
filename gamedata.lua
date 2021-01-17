@@ -18,7 +18,7 @@ function gamedata:init(width, height)
   local fw = width-math.max(math.floor(width*.12),50)
   local fh = height-math.max(math.floor(height*.10),50)
   self.count=math.floor((fw*fh)/4000)
-	
+
 	self.width = width
 	self.height = height
   
@@ -39,10 +39,50 @@ function gamedata:init(width, height)
 	end
   
   gamedata.currentColor = 3
+	
+	self:load()
 
   self.frame = GameFrame:new(width,height)
 
   -- table.insert(texts, "frame: "..fw.."x"..fh)
+end
+
+function gamedata:store()
+	content = ""
+	
+	content = content.."level=".."1".."\n"
+	content = content.."colorName="..self:getColorName().."\n"
+	content = content.."count="..self.count.."\n"
+	love.filesystem.write("fc_settings.dat",content)
+end
+
+local savedataLoader= {
+	-- ["level"]=function(self, val) end,
+	-- ["count"]=function(self, val)
+		-- self.count = val
+	-- end,
+	["colorName"]=function(self, val)
+		self:setColors(val)
+	end
+}
+
+function gamedata:load()
+	if not love.filesystem.getInfo("fc_settings.dat", "file") then return end
+	-- love.filesystem.load("fc_settings.dat");
+	for line in love.filesystem.lines("fc_settings.dat") do
+		local eq=string.find(line,"=",1,true)
+		local key = string.sub(line,1,eq-1)
+		local val = string.sub(line,eq+1)
+		
+		if savedataLoader[key] ~= nil then
+			print("loading",key,val)
+			savedataLoader[key](self, val)
+		else
+			print("ignoring",key)
+		end
+		
+		-- table.insert(highscores, line)
+	end
 end
 
 function gamedata:getPatchCount()

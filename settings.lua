@@ -143,10 +143,12 @@ function SettingsUI:init()
 	local quit = Button:new("Beenden", function()
 			print("quit")
 			-- gamedata.overlay = nil
+			self:close()
 			love.event.quit( "quit" )
 		end, btnBorder, self.dim[4]-btnBorder, "BL")
 	local restart = Button:new("Neues Spiel", function()
 			print("restart")
+			self:close()
 			love.event.quit( "restart" )
 		end, quit.posx+quit.width+btnBorder, quit.posy, "TL")
 		
@@ -155,6 +157,10 @@ function SettingsUI:init()
 	self.buttons={
 		quit, restart, unpack(self.colors.buttons)
 	}
+end
+
+function SettingsUI:closing()
+	gamedata:store()
 end
 
 local function inShape(x,y, left,top,width,height)
