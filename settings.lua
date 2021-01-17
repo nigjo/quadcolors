@@ -22,9 +22,9 @@ function ColorGroupButton:draw()
 	-- g.rectangle("line", 0,0,self.width-2,dy)
 	--local colName = self.names[(self.viewStart+i-2)%#self.names+1]
 	if self.selected==true then
-	g.setColor(1,1,1,.25)
+		g.setColor(1,1,1,.25)
 	else
-	g.setColor(0,0,0,.25)
+		g.setColor(0,0,0,.25)
 	end
 	g.print(self.colName,1,1)
 	g.push()
@@ -61,12 +61,12 @@ function ColorGroupSelector:new(w,h)
 
 	s.btnBorder=12
 	local btnBorder=s.btnBorder
-	local up = Button:new("mehr", function(btn)
+	local up = Button:new(Locale.get('settings_more_up'), function(btn)
 			s.viewStart = s.viewStart - 1
 			s:refresh()
 		end, w-btnBorder, 2*btnBorder, "TR")
 	up.enabled = #s.names > self.lines
-	local down = Button:new("mehr", function(btn)
+	local down = Button:new(Locale.get('settings_more_down'), function(btn)
 			s.viewStart = s.viewStart + 1
 			s:refresh()
 		end, w-btnBorder, h-btnBorder, "BR")
@@ -140,13 +140,13 @@ function SettingsUI:init()
 		self.width-2*borderx, self.height-2*bordery
 	}
 	
-	local quit = Button:new("Beenden", function()
+	local quit = Button:new(Locale.get("settings_quit"), function()
 			print("quit")
 			-- gamedata.overlay = nil
 			self:close()
 			love.event.quit( "quit" )
 		end, btnBorder, self.dim[4]-btnBorder, "BL")
-	local restart = Button:new("Neues Spiel", function()
+	local restart = Button:new(Locale.get("settings_new_game"), function()
 			print("restart")
 			self:close()
 			love.event.quit( "restart" )

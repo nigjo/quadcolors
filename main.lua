@@ -1,3 +1,4 @@
+Locale = require "lang"
 require "gamedata"
 require "frame"
 require "winning"

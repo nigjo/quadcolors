@@ -18,15 +18,15 @@ function GameFrame:init()
 	f.texts={
 		point={
 			x=f.menuW+gamedata.pitch.width*.1,
-			text = love.graphics.newText( f.titleFont, "Points: ")
+			text = love.graphics.newText( f.titleFont, Locale.get("frame_title_points")..": ")
 		},
 		size={
 			x=f.menuW+gamedata.pitch.width*.4,
-			text= love.graphics.newText( f.titleFont, "Size: ")
+			text= love.graphics.newText( f.titleFont, Locale.get("frame_title_size")..": ")
 		},
 		playtime={
 			x=f.menuW+gamedata.pitch.width*.7,
-			text = love.graphics.newText( f.titleFont, "Time: ")
+			text = love.graphics.newText( f.titleFont, Locale.get("frame_title_time")..": ")
 		}
 	}
 	f.baseline = (f.titleH-f.texts.point.text:getHeight())/2
