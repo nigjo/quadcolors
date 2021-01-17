@@ -39,15 +39,16 @@ function WinningParty:init()
 		self.rockets[i] = self:createRocket()
 	end
 	self.maxr=math.min(self.width,self.height)*.075
+	local btnBorder=math.min(self.width*.05,self.height*.05)
 	
-	local restart = Button:new("Neue Spiel", function()
+	local restart = Button:new(Locale.get('winning_new_game'), function()
 		print("restart")
 		self:close()
 		love.event.quit( "restart" )
-	end, self.width*.05,self.height*.05)
-	local nextLevel = Button:new("Weiter",
+	end, btnBorder,btnBorder)
+	local nextLevel = Button:new(Locale.get('winning_next_level'),
 	function()
-	end, restart.posx+restart.width+self.width*.05,restart.posy)
+	end, restart.posx+restart.width+btnBorder,restart.posy)
 	nextLevel.enabled = false
 	nextLevel.visible = false
 	
