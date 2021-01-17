@@ -1,5 +1,6 @@
 require "gamedata"
 require "frame"
+require "winning"
 
 function love.load()
 	print "initialize"
