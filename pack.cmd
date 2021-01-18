@@ -18,7 +18,9 @@ echo lib\button\button.lua
 echo lib\voronoi\voronoi.lua
 )>pack.lst
 
-set appbase=colors-%DATE:~6,4%%DATE:~3,2%%DATE:~0,2%%TIME:~0,2%%TIME:~3,2%
+for /F %%C in ('git log --oneline ^| find /c /v ""') do set count=%%C
+
+set appbase=colors-v%count%_%DATE:~6,4%%DATE:~3,2%%DATE:~0,2%%TIME:~0,2%%TIME:~3,2%
 
 if not exist "%deploydir%" md "%deploydir%"
 
