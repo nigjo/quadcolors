@@ -1,5 +1,33 @@
 require "overlay"
-require "lib/button/button"
+require "lib.button.button"
+
+BrowserLink = Button:new()
+function BrowserLink:new(href, text, posx, posy, alignment)
+	local b
+	b = Button.new(self, text or href, function()
+		b.pressed = true
+		b.pressedstart = love.timer.getTime()
+		love.system.openURL(href)
+	end, posx, posy, alignment)
+	
+	return b
+end
+
+function BrowserLink:draw()
+	local g=love.graphics
+	if self.pressed then
+		g.setColor(1, .5,.5)		
+		local now = love.timer.getTime()
+		if now-self.pressedstart > 1.25 then
+			self.pressed = false
+			self.pressedstart = nil
+		end
+	else
+		g.setColor(.5,.5,1)
+	end
+	Button.drawShadowText(self.title, self.posx+self.tx, self.posy+self.ty, self.enabled)
+	g.rectangle("line", self.posx,self.posy,self.width,self.height)
+end
 
 ColorGroupButton = Radiobutton:new()
 
@@ -140,7 +168,7 @@ function SettingsUI:init()
 		borderx, bordery,
 		self.width-2*borderx, self.height-2*bordery
 	}
-	
+
 	local quit = Button:new(Locale.get("settings_quit"), function()
 			print("quit")
 			-- gamedata.overlay = nil
@@ -152,11 +180,15 @@ function SettingsUI:init()
 			self:close()
 			love.event.quit( "restart" )
 		end, quit.posx+quit.width+btnBorder, quit.posy, "TL")
-		
+
+	local github = BrowserLink:new(
+		"https://github.com/nigjo/quadcolors", "view on github",
+		self.dim[3]-btnBorder, self.dim[4]-btnBorder, "BR")
+
 	self.colors = ColorGroupSelector:new(self.dim[3], quit.posy-btnBorder)
-	
+
 	self.buttons={
-		quit, restart, unpack(self.colors.buttons)
+		quit, restart, github, unpack(self.colors.buttons)
 	}
 end
 
@@ -205,13 +237,10 @@ function SettingsUI:draw(dx,dy)
 	g.setLineWidth(s)
 
 	g.translate(self.dim[1],self.dim[2])
-	for i=1,#self.buttons do
-		if self.buttons[i].visible ~= false then
-			self.buttons[i]:draw()
-		end
-	end
 
 	self.colors:draw()
+
+	Button.drawAll(self.buttons)
 
 	g.pop()
 end
