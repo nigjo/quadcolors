@@ -28,6 +28,16 @@ return {
 		{0,.8,.5,1},
 		{.5,.5,.5,1}
 	},
+	ItoOkabe={  -- https://jfly.uni-koeln.de/color/
+		-- {0,0,0,1}, -- Black
+		-- {.9,.6,0,1}, -- Orange
+		-- {.35,.7,.9,1}, -- Sky Blue
+		{0,.6,.5,1}, -- bluish Green
+		-- {.95,.9,.25,1}, -- Yellow
+		{0,.45,.7,1}, -- Blue
+		{.8,.4,.0,1}, -- Vermilion
+		{.8,.6,.7,1} -- reddish Purple
+	},
 	grayscales={
 		{.8,.8,.8,1},
 		{.6,.6,.6,1},
