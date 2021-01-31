@@ -1,5 +1,30 @@
+-- MIT License
+
+-- Copyright (c) 2021 Jens Hofschröer
+
+-- Permission is hereby granted, free of charge, to any person obtaining a copy
+-- of this software and associated documentation files (the "Software"), to deal
+-- in the Software without restriction, including without limitation the rights
+-- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+-- copies of the Software, and to permit persons to whom the Software is
+-- furnished to do so, subject to the following conditions:
+
+-- The above copyright notice and this permission notice shall be included in all
+-- copies or substantial portions of the Software.
+
+-- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+-- SOFTWARE.
+
 require "lib.overlay"
+require "lib.scrollable"
 require "lib.button.button"
+
+ColorGroupSelector = require "colorselection"
 
 BrowserLink = Button:new()
 function BrowserLink:new(href, text, posx, posy, alignment)
@@ -9,7 +34,7 @@ function BrowserLink:new(href, text, posx, posy, alignment)
 		b.pressedstart = love.timer.getTime()
 		love.system.openURL(href)
 	end, posx, posy, alignment)
-	
+	b.name = 'btnGetsources'
 	return b
 end
 
@@ -29,136 +54,9 @@ function BrowserLink:draw()
 	g.rectangle("line", self.posx,self.posy,self.width,self.height)
 end
 
-ColorGroupButton = Radiobutton:new()
-
-function ColorGroupButton:setColors(name)
-end
-
-function ColorGroupButton:draw()
-	-- Radiobutton.draw(self)
-	local g=love.graphics
-	if self.selected==true then
-		g.setColor(0,0,0,1)
-		g.rectangle("fill", 0,0,self.width,self.height)
-	end
-	g.setColor(1,1,1,.5)
-	g.rectangle("line", 0,0,self.width,self.height)
-	
-	-- g.line(0,0,self.width,self.height)
-	-- g.line(0,self.height,self.width,0)
-	-- g.setColor(0,1,1,1)
-	-- g.rectangle("line", 0,0,self.width-2,dy)
-	--local colName = self.names[(self.viewStart+i-2)%#self.names+1]
-	if self.selected==true then
-		g.setColor(1,1,1,.25)
-	else
-		g.setColor(0,0,0,.25)
-	end
-	g.print(self.colName,1,1)
-	g.push()
-	g.translate(0,self.height/2)
-	-- print((self.viewStart+i-1)%#self.names+1, self.names[(self.viewStart+i-1)%#self.names+1])
-	local cols = gamedata:getColorsOf(self.colName)
-	local px=self.width/5
-	-- print(tostring(cols))
-	for j=1,4 do
-		--g.circle("line", j*px,dy/2,dy/5*2)
-		g.translate(px,0)
-		gamedata.pitch:drawFieldGem(self.colorGem,cols[j])
-	end
-	g.pop()
-end
-
-ColorGroupSelector={
-	lines = 4
-}
-function ColorGroupSelector:new(w,h)
-	local s = {}
-	setmetatable(s,self)
-	self.__index = self
-	
-	s.names = gamedata:getColorNames()
-	local currentName = gamedata:getColorName()
-	s.viewStart = 1
-	for i,name in ipairs(s.names) do
-		if name==currentName then
-			s.viewStart = i
-			break
-		end
-	end
-
-	s.btnBorder=12
-	local btnBorder=s.btnBorder
-	local up = Button:new(Locale.get('settings_more_up'), function(btn)
-			s.viewStart = s.viewStart - 1
-			s:refresh()
-		end, w-btnBorder, 2*btnBorder, "TR")
-	up.enabled = #s.names > self.lines
-	local down = Button:new(Locale.get('settings_more_down'), function(btn)
-			s.viewStart = s.viewStart + 1
-			s:refresh()
-		end, w-btnBorder, h-btnBorder, "BR")
-	down.enabled = #s.names > self.lines
-	
-	s.width=up.posx-2*btnBorder
-	s.height=h-btnBorder
-
-	local dy=math.floor((s.height-self.lines-2)/self.lines)
-	local px=s.width/5
-	local gemSize = math.min(dy,px)*2/5
-	s.colorGem = gamedata.pitch:createSelectorGem(gemSize)
-	
-	self.colSelectors={}
-	for i=1,self.lines do
-		local nextBtn = ColorGroupButton:new("colSel"..i, function(btn)
-				gamedata:setColors(gamedata:getColorsOf(btn.colName))
-			end, btnBorder,btnBorder+dy*(i-1))
-		nextBtn:setGroup(self.colSelectors)
-		nextBtn.visible = false
-		nextBtn.height = dy
-		nextBtn.width = s.width
-		nextBtn.colorGem = s.colorGem
-		table.insert(self.colSelectors,nextBtn)		
-	end
-	-- Initial ist "currentName" oben
-	-- self.colSelectors[1].selected = true
-
-	s.buttons = {up,down, unpack(self.colSelectors)}
-	s:refresh()
-
-	return s
-end
-
-function ColorGroupSelector:refresh()
-	local currentName = gamedata:getColorName()
-	-- self.colSelectors[1].selected = true
-	for i=1,self.lines do
-		local nextBtn = self.colSelectors[i]
-		nextBtn.colName = self.names[(self.viewStart+i-2)%#self.names+1]
-		nextBtn.selected = nextBtn.colName == currentName
-	end
-end
-
-function ColorGroupSelector:draw()
-	local g=love.graphics
-	g.push()
-	g.setColor(0,0,1,1)
-	-- g.rectangle("line", 8,8,self.width,self.height)
-	--TODO Gems auf ein Canvas malen. Ist seltener
-	g.translate(self.btnBorder+1,self.btnBorder+1)
-	local dy=math.floor((self.height-self.lines-2)/self.lines)
-	local px=self.width/(4+1)
-	for i=1,self.lines do
-		--TODO: draw button
-		self.colSelectors[i]:draw()
-		g.translate(0,dy+1)
-	end
-	g.pop()
-end
-
 SettingsUI=Overlay:new()
 function SettingsUI:init()
-	print("Einstellungen")
+	print("Settings UI")
 	self.name="SettingsUI"
 
 	local borderx = self.width*.10
@@ -185,10 +83,11 @@ function SettingsUI:init()
 		"https://github.com/nigjo/quadcolors", "view on github",
 		self.dim[3]-btnBorder, self.dim[4]-btnBorder, "BR")
 
-	self.colors = ColorGroupSelector:new(self.dim[3], quit.posy-btnBorder)
+	self.colors = ColorGroupSelector:new(self.dim[3]-2*btnBorder, quit.posy-2*btnBorder)
+	self.colors.dim = {btnBorder,btnBorder,self.colors.width,self.colors.height}
 
 	self.buttons={
-		quit, restart, github, unpack(self.colors.buttons)
+		quit, restart, github
 	}
 end
 
@@ -203,15 +102,23 @@ end
 
 function SettingsUI:findShape(x,y)
 	if inShape(x,y, unpack(self.dim)) then
+		local dlgX = x-self.dim[1]
+		local dlgY = y-self.dim[2]
+		if inShape(dlgX,dlgY, unpack(self.colors.dim)) then
+			return self.colors:findShape(dlgX-self.colors.dim[1],dlgY-self.colors.dim[2])
+		end
+	
 		for i=1,#self.buttons do
 			if self.buttons[i].enabled
-					and inShape(x-self.dim[1],y-self.dim[2], unpack(self.buttons[i]:getBounds())) then
+					and inShape(dlgX,dlgY, unpack(self.buttons[i]:getBounds())) then
+				local btnName = self.buttons[i].name or ("dialogBtn"..i)
 				return {
-					name="dialogBtn"..i,
+					name=btnName,
 					action=self.buttons[i].action
 				}
 			end
 		end
+
 		return {
 			name="dialog",
 			action=function() end
@@ -219,6 +126,13 @@ function SettingsUI:findShape(x,y)
 	end
 	return Overlay.findShape(self)
 end
+
+-- function SettingsUI:wheelmoved(x, y)
+	-- print('SettingsUI',love.mouse.getX(),love.mouse.getY(),x,y)
+	-- local shape = self:findShape(love.mouse.getX(),love.mouse.getY())
+	-- print('SettingsUI','shape', shape.name)
+	-- -- love.mouse.
+-- end
 
 function SettingsUI:draw(dx,dy)
 	Overlay.draw(self, dx,dy)
@@ -237,8 +151,10 @@ function SettingsUI:draw(dx,dy)
 	g.setLineWidth(s)
 
 	g.translate(self.dim[1],self.dim[2])
-
+	g.push()
+	g.translate(self.colors.dim[1],self.colors.dim[2])
 	self.colors:draw()
+	g.pop()
 
 	Button.drawAll(self.buttons)
 
