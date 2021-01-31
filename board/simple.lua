@@ -1,4 +1,4 @@
-require "board"
+require "lib.board"
 QuadraticPitch=FCBoard:new()
 
 function QuadraticPitch:createSelectorGem(size)

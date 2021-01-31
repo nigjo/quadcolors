@@ -1,3 +1,3 @@
-require "pitch"
+require "lib.board"
 EmptyField=FCPitchBase:new()
 return EmptyField

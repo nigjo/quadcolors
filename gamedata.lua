@@ -1,5 +1,5 @@
-require "board"
-local pitchClass = require "board-gems"
+require "lib.board"
+local pitchClass = require "board.gems"
 
 gamedata = {
 	events = {},

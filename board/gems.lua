@@ -1,5 +1,5 @@
-require "lib/voronoi/voronoi"
-require "board"
+require "lib.voronoi.voronoi"
+require "lib.board"
 
 Field=FCBoard:new()
 Field.border = 20
