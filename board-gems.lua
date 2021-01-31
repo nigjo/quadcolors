@@ -1,7 +1,7 @@
 require "lib/voronoi/voronoi"
-require "pitch"
+require "board"
 
-Field=FCPitchBase:new()
+Field=FCBoard:new()
 Field.border = 20
 
 colorInitialDot = {0,0,1} -- blue
@@ -87,7 +87,7 @@ end
 
 function Field:createSelectorGem(size)
 	local colorDotsSize = size
-	local colorGem = FCPitchBase.createSelectorGem(self,size)
+	local colorGem = FCBoard.createSelectorGem(self,size)
 	colorGem.centroid = {x=0,y=0}
 	for i=math.pi/4,2*math.pi,math.pi/4 do
 		colorGem:add(colorDotsSize*math.cos(i),

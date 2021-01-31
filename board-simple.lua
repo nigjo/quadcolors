@@ -1,8 +1,8 @@
-require "pitch"
-QuadraticPitch=FCPitchBase:new()
+require "board"
+QuadraticPitch=FCBoard:new()
 
 function QuadraticPitch:createSelectorGem(size)
-	local gem = FCPitchBase.createSelectorGem(self, size)
+	local gem = FCBoard.createSelectorGem(self, size)
 	gem:add(-size,-size)
 	gem:add(size,-size)
 	gem:add(size,size)

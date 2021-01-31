@@ -1,6 +1,6 @@
-require "pitch"
+require "board"
 
-TrianglesPitch=FCPitchBase:new()
+TrianglesPitch=FCBoard:new()
 
 function TrianglesPitch:createSelectorGem(size)
 	local a = 2*size
@@ -8,7 +8,7 @@ function TrianglesPitch:createSelectorGem(size)
 	local h=size*math.sqrt(3)
 	local dy=(a-h)
 	-- print(size, a,ru,h)
-	local p=FCPitchBase.createSelectorGem(self, size)
+	local p=FCBoard.createSelectorGem(self, size)
 	p:add(0,-ru+dy)
 	p:add(size,h-ru+dy)
 	p:add(-size,h-ru+dy)
@@ -77,7 +77,7 @@ local function triarea(...)
 end
 
 function TrianglesPitch:updateValidCounter()
-	FCPitchBase.updateValidCounter(self, self.tris)
+	FCBoard.updateValidCounter(self, self.tris)
 end
 
 function TrianglesPitch:findPatch(x,y)
@@ -116,7 +116,7 @@ end
 --- find triangles next to a selected on.
 -- this method works only because one of the triangles has always one full
 -- side facing the other. t1 facing t2 or t2 facing t1.
-function FCPitchBase:_getNeighbors(fcPolgon)
+function FCBoard:_getNeighbors(fcPolgon)
 	local siblings={}
 	for idxP=1,#fcPolgon.points,2 do
 		local x1=fcPolgon.points[idxP]

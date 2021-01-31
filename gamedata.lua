@@ -1,5 +1,5 @@
-require "pitch"
-local pitchClass = require "pitch-gems"
+require "board"
+local pitchClass = require "board-gems"
 
 gamedata = {
 	events = {},
@@ -38,9 +38,9 @@ function gamedata:init(width, height)
 	if type(self.pitch.patchCount) == 'number' then
 		self.count = self.pitch.patchCount
 	end
-  
+
   gamedata.currentColor = 3
-	
+
 	self:load()
 end
 

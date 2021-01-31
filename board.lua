@@ -76,8 +76,8 @@ function FCPatch:new(...)
 end
 
 
-FCPitchBase={}
-function FCPitchBase:new(knotCount, width, height)
+FCBoard={}
+function FCBoard:new(knotCount, width, height)
 	local p = {}
 	setmetatable(p, self)
 	self.__index = self
@@ -90,7 +90,7 @@ function FCPitchBase:new(knotCount, width, height)
 	return p
 end
 
-function FCPitchBase:init(knotCount)
+function FCBoard:init(knotCount)
 	return knotCount
 end
 
@@ -98,11 +98,11 @@ end
 -- scans the current pitch for the right patch
 -- @return FCPatch or nil
 --
-function FCPitchBase:findPatch(x,y)
+function FCBoard:findPatch(x,y)
 	return nil
 end
 
-function FCPitchBase:setSelected(x,y)
+function FCBoard:setSelected(x,y)
 	local patch = self:findPatch(x,y)
 	self._lastSelected = patch
 	if patch~=nil then
@@ -122,7 +122,7 @@ function FCPitchBase:setSelected(x,y)
 	end
 end
 
-function FCPitchBase:updateValidCounter(polygons)
+function FCBoard:updateValidCounter(polygons)
 	if polygons~=nil then
 		local counter = 0
 		for i,fcPolgon in ipairs(polygons) do
@@ -142,19 +142,19 @@ end
 
 --[[--
 	Creates a FCPolygon for the color selection. This polygon will be passed to
-	@{FCPitchBase:drawFieldGem} as a first argument.
+	@{FCBoard:drawFieldGem} as a first argument.
 
 	@param size height and width of the polygon. The polygon should extend from
 	  `-size` to `size`. If the gem is a circle the radius will be `size`
 		
 	@return FCPolygon
 ]]
-function FCPitchBase:createSelectorGem(size)
+function FCBoard:createSelectorGem(size)
 	local gem = FCPolygon:new()
 	return gem
 end
 
-function FCPitchBase:drawFieldGem(polygon, color)
+function FCBoard:drawFieldGem(polygon, color)
 	if #polygon.points >= 6 then
 		if type(color) == 'number' then 
 			color = gamedata:getColor(color)
@@ -168,17 +168,17 @@ function FCPitchBase:drawFieldGem(polygon, color)
 	end
 end
 
-function FCPitchBase:drawPolygon(polygon)
+function FCBoard:drawPolygon(polygon)
 end
 
-function FCPitchBase:draw()
+function FCBoard:draw()
 end
 
-function FCPitchBase:_getNeighbors(fcPolgon)
+function FCBoard:_getNeighbors(fcPolgon)
 	return {}
 end
 
-function FCPitchBase:_debugDrawNeighbors(fcPolgon)
+function FCBoard:_debugDrawNeighbors(fcPolgon)
 	if fcPolgon~=nil then
 		local cx,cy=fcPolgon:getCenter()
 		-- eine Auswahl vorhanden
