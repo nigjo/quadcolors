@@ -60,7 +60,9 @@ local savedataLoader= {
 		-- self.count = val
 	-- end,
 	["colorName"]=function(self, val)
-		self:setColors(val)
+		if not self:setColors(val) then
+			self:setColors('default')
+		end
 	end,
 	["locale"]=function(self, val)
 		Locale:setLocale(val)
@@ -141,12 +143,17 @@ function gamedata:getColorsOf(name)
 end
 
 function gamedata:setColors(colors)
+	local nextcolor;
 	if type(colors)=="table" then
-		self.colors = colors
+		nextcolor = colors
 	else
-		self.colors = self.colorGroups[colors]
+		nextcolor = self.colorGroups[colors]
 	end
-	self:updateField()
+	if nextcolor ~= nil then
+		self.colors = nextcolor
+		self:updateField()
+	end
+	return nextcolor ~= nil
 end
 
 function gamedata:checkStart()
