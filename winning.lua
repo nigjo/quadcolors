@@ -1,5 +1,5 @@
-require "overlay"
-require "lib/button/button"
+require "lib.overlay"
+require "lib.button.button"
 
 local gameIsRunning = false
 

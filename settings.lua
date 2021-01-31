@@ -1,4 +1,4 @@
-require "overlay"
+require "lib.overlay"
 require "lib.button.button"
 
 BrowserLink = Button:new()
