@@ -22,7 +22,7 @@ function Field:init(knotCount)
 		local maxcount
 		defectField = false
 		repeat
-			print("init field")
+			print("try a new dot matrix")
 			for i=1,knotCount do
 				local dot = {
 					x=Field.border+math.random(self.width-Field.border-Field.border),
@@ -34,7 +34,7 @@ function Field:init(knotCount)
 			end
 
 			-- do not try endless to arrange the points
-			maxcount=20
+			maxcount=15
 			while maxcount>0 and self:rearrange() do
 				maxcount = maxcount - 1
 			end
@@ -46,6 +46,7 @@ function Field:init(knotCount)
 				-- some polygons seems to be defective
 				print ("possible defect field")
 				defectField = true
+				self.arranged = false
 				break;
 			end
 		end
@@ -251,6 +252,7 @@ function Field:updateValidCounter()
 end
 
 function Field:rearrange()
+	print("Field:rearrange")
 	if not self.arranged then
 		-- print "checking..."
 		local moved = false
